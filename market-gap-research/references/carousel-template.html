@@ -1,0 +1,382 @@
+<!doctype html>
+<!--
+  Instagram carousel template for market-gap-research.
+  9 slides, each 1080x1350 (portrait). Screenshot each .slide individually for IG.
+  Swap content blocks marked {{ ... }} per run.
+  Brutalist editorial aesthetic — see SKILL.md "Carousel design" section.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{PRODUCT_NAME}} — Gaps Carousel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,900;1,9..144,900&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #F2EEE5;
+      --ink: #0A0A0A;
+      --rule: #0A0A0A;
+      --c1: #FF4D2E; /* red-orange */
+      --c2: #0B5BFF; /* electric blue */
+      --c3: #1F8F4A; /* green */
+      --c4: #9B2BFF; /* purple */
+      --c5: #D9A300; /* mustard */
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #2a2a2a;
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .slide {
+      width: 1080px;
+      height: 1350px;
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+      color: var(--ink);
+      background-image:
+        radial-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+        radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+      background-size: 4px 4px, 7px 7px;
+      background-position: 0 0, 2px 2px;
+    }
+    .frame {
+      position: absolute;
+      inset: 48px;
+      border: 2px solid var(--ink);
+      padding: 56px;
+      display: flex;
+      flex-direction: column;
+    }
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .pill {
+      border: 1.5px solid var(--ink);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+    .accent-bar {
+      height: 6px;
+      width: 80px;
+      background: var(--accent, var(--ink));
+      margin-bottom: 36px;
+    }
+    .display {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 116px;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+    }
+    .display em {
+      font-style: italic;
+      color: var(--accent, var(--ink));
+    }
+    .body {
+      font-size: 28px;
+      line-height: 1.4;
+      margin-top: 40px;
+      max-width: 800px;
+    }
+    .quote {
+      border-left: 6px solid var(--accent, var(--ink));
+      padding: 18px 24px;
+      margin-top: 36px;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 30px;
+      line-height: 1.35;
+    }
+    .quote .src {
+      display: block;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-style: normal;
+      font-size: 14px;
+      color: #555;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .takeaway {
+      margin-top: auto;
+      background: var(--ink);
+      color: #fff;
+      padding: 28px 32px;
+      position: relative;
+    }
+    .takeaway .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent, #fff);
+      margin-bottom: 10px;
+    }
+    .takeaway .text {
+      font-family: 'Fraunces', serif;
+      font-size: 30px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #555;
+      margin-top: 24px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .big-numeral {
+      position: absolute;
+      top: -60px;
+      right: -20px;
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 380px;
+      line-height: 1;
+      color: var(--accent, var(--ink));
+      opacity: 0.16;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .frame > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       SLIDE 1 — Cover
+       ========================================================= -->
+  <div class="slide" style="--accent: var(--c1);">
+    <div class="frame">
+      <div class="meta">
+        <span>{{HANDLE}}</span>
+        <span class="pill">Gap Research / Vol.{{VOLUME}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h1 class="display">5 gaps in <em>{{PRODUCT_NAME}}</em>.</h1>
+      <p class="body">{{COVER_SUBTITLE}}</p>
+      <div class="takeaway" style="--accent: var(--c1);">
+        <div class="label">Method</div>
+        <div class="text">Reddit + X + AppSumo, mined via Apify. Every quote sourced.</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>01 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SLIDE 2 — Methodology / credibility
+       ========================================================= -->
+  <div class="slide" style="--accent: var(--c2);">
+    <div class="frame">
+      <div class="meta">
+        <span>How I dug</span>
+        <span class="pill">Methodology</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">Real <em>quotes</em>, not vibes.</h2>
+      <p class="body">{{METHODOLOGY_PARAGRAPH}}</p>
+      <div class="takeaway" style="--accent: var(--c2);">
+        <div class="label">Sources</div>
+        <div class="text">~{{REDDIT_N}} Reddit posts. ~{{X_N}} tweets. {{REVIEW_N}} verified-purchase reviews.</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>02 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SLIDES 3–7 — One per gap
+       Duplicate this block per gap. Rotate --accent.
+       ========================================================= -->
+  <div class="slide" style="--accent: var(--c1);">
+    <div class="big-numeral">1</div>
+    <div class="frame">
+      <div class="meta">
+        <span>Gap 01</span>
+        <span class="pill">{{GAP_1_TYPE}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">{{GAP_1_HEADLINE}}</h2>
+      <div class="quote">
+        "{{GAP_1_QUOTE}}"
+        <span class="src">{{GAP_1_SOURCE}}</span>
+      </div>
+      <div class="takeaway" style="--accent: var(--c1);">
+        <div class="label">Wedge</div>
+        <div class="text">{{GAP_1_WEDGE}}</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>03 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" style="--accent: var(--c2);">
+    <div class="big-numeral">2</div>
+    <div class="frame">
+      <div class="meta">
+        <span>Gap 02</span>
+        <span class="pill">{{GAP_2_TYPE}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">{{GAP_2_HEADLINE}}</h2>
+      <div class="quote">
+        "{{GAP_2_QUOTE}}"
+        <span class="src">{{GAP_2_SOURCE}}</span>
+      </div>
+      <div class="takeaway" style="--accent: var(--c2);">
+        <div class="label">Wedge</div>
+        <div class="text">{{GAP_2_WEDGE}}</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>04 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" style="--accent: var(--c3);">
+    <div class="big-numeral">3</div>
+    <div class="frame">
+      <div class="meta">
+        <span>Gap 03</span>
+        <span class="pill">{{GAP_3_TYPE}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">{{GAP_3_HEADLINE}}</h2>
+      <div class="quote">
+        "{{GAP_3_QUOTE}}"
+        <span class="src">{{GAP_3_SOURCE}}</span>
+      </div>
+      <div class="takeaway" style="--accent: var(--c3);">
+        <div class="label">Wedge</div>
+        <div class="text">{{GAP_3_WEDGE}}</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>05 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" style="--accent: var(--c4);">
+    <div class="big-numeral">4</div>
+    <div class="frame">
+      <div class="meta">
+        <span>Gap 04</span>
+        <span class="pill">{{GAP_4_TYPE}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">{{GAP_4_HEADLINE}}</h2>
+      <div class="quote">
+        "{{GAP_4_QUOTE}}"
+        <span class="src">{{GAP_4_SOURCE}}</span>
+      </div>
+      <div class="takeaway" style="--accent: var(--c4);">
+        <div class="label">Wedge</div>
+        <div class="text">{{GAP_4_WEDGE}}</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>06 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" style="--accent: var(--c5);">
+    <div class="big-numeral">5</div>
+    <div class="frame">
+      <div class="meta">
+        <span>Gap 05</span>
+        <span class="pill">{{GAP_5_TYPE}}</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">{{GAP_5_HEADLINE}}</h2>
+      <div class="quote">
+        "{{GAP_5_QUOTE}}"
+        <span class="src">{{GAP_5_SOURCE}}</span>
+      </div>
+      <div class="takeaway" style="--accent: var(--c5);">
+        <div class="label">Wedge</div>
+        <div class="text">{{GAP_5_WEDGE}}</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>07 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SLIDE 8 — What's NOT a gap (counter-evidence)
+       ========================================================= -->
+  <div class="slide" style="--accent: var(--c2);">
+    <div class="frame">
+      <div class="meta">
+        <span>What's NOT a gap</span>
+        <span class="pill">Don't waste your bet</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">Don't bet <em>against</em> these.</h2>
+      <p class="body">{{NOT_A_GAP_PARAGRAPH}}</p>
+      <div class="takeaway" style="--accent: var(--c2);">
+        <div class="label">Why this matters</div>
+        <div class="text">A wedge built against a strength is dead on arrival. Pick gaps, not strengths.</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>08 / 09</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SLIDE 9 — CTA
+       ========================================================= -->
+  <div class="slide" style="--accent: var(--c1);">
+    <div class="frame">
+      <div class="meta">
+        <span>If you're building</span>
+        <span class="pill">Save / Share</span>
+      </div>
+      <div class="accent-bar"></div>
+      <h2 class="display">Find a real gap. Build the <em>real</em> fix.</h2>
+      <p class="body">{{CTA_PARAGRAPH}}</p>
+      <div class="takeaway" style="--accent: var(--c1);">
+        <div class="label">Follow</div>
+        <div class="text">{{HANDLE}} — research-as-content. New teardown every week.</div>
+      </div>
+      <div class="footer">
+        <span>{{HANDLE}}</span>
+        <span>09 / 09</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
