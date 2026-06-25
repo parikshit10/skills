@@ -11,6 +11,7 @@ Maintained by [@parikshitpruthi](https://www.instagram.com/parikshitpruthi/) (fo
 | Skill | What it does | When to use it |
 |---|---|---|
 | [market-gap-research](./market-gap-research) | Mines X, Reddit, and review sites via Apify to surface product gaps and unmet feature requests, then ships an Instagram carousel / LinkedIn post / research report. | Competitor research, finding SaaS wedges, complaint mining, "what do users wish X did?" |
+| [handoff](./handoff) | Captures everything in the current session into one self-contained note so a brand-new session can pick up exactly where this one left off — no context lost. | Wrapping up a session, before `/clear`, switching machines, or parking work to continue later. |
 
 More skills coming. Each lives in its own top-level folder.
 
