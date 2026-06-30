@@ -1,0 +1,340 @@
+<!doctype html>
+<!--
+  /as-built template — self-contained, fully local "planned vs built" recap.
+  Run AFTER a feature ships. The agent fills TWO slots and sets ONE attribute:
+    1. body data-plan="SLUG"        -> unique slug so comments persist per-recap
+    2. the ASBUILT:CONTENT slot     -> hero + section blocks (see as-built-blocks.md)
+    3. the ASBUILT:RAWMD slot       -> the ORIGINAL plan markdown (powers the Plan toggle)
+  Each slot below is a single HTML comment; replace that one comment with your content.
+  Everything else — plan index, comment buttons, section numbers, the fix drawer,
+  export, counts — is generated automatically by the script. Do not hand-write them.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/as-built</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0e14;--ink-2:#0d131b;--ink-3:#111a24;--raised:#15212e;
+  --line:rgba(120,165,205,.14);--line-strong:rgba(120,165,205,.28);
+  --text:#e2eaf2;--muted:#8395a8;--faint:#5f7185;
+  --cyan:#5cc9e6;--cyan-deep:#2a9fc0;--amber:#f3b14a;--green:#63d39b;--red:#ef7d88;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+  --display:"Bricolage Grotesque",var(--body);--r:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:34px 34px;background-position:center top;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 500px at 80% -10%,rgba(99,211,155,.10),transparent 60%),radial-gradient(700px 500px at -10% 20%,rgba(243,177,74,.06),transparent 55%);}
+.wrap{position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;padding:14px 26px;background:rgba(10,14,20,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-strong)}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-weight:600;letter-spacing:.02em}
+.brand .glyph{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:linear-gradient(150deg,var(--green),#3fae7c);color:#04140c;font-weight:800;font-family:var(--display);font-size:15px;box-shadow:0 0 0 1px rgba(99,211,155,.4),0 6px 18px -6px rgba(99,211,155,.6)}
+.brand b{color:var(--text)}.brand .slash{color:var(--green)}.spacer{flex:1}
+.view-toggle{display:flex;border:1px solid var(--line-strong);border-radius:99px;padding:3px;background:var(--ink-2);font-family:var(--mono);font-size:12px}
+.view-toggle button{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:7px 15px;border-radius:99px;font-family:inherit;font-size:inherit;display:flex;align-items:center;gap:7px;transition:.22s}
+.view-toggle button.active{background:var(--green);color:#04140c;font-weight:600}
+.view-toggle button:not(.active):hover{color:var(--text)}
+.status-chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid var(--green);color:var(--green);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.status-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.shell{max-width:1180px;margin:0 auto;padding:46px 26px 160px;display:grid;grid-template-columns:210px 1fr;gap:46px}
+@media(max-width:900px){.shell{grid-template-columns:1fr;gap:30px}.rail{display:none}}
+.rail{position:sticky;top:96px;align-self:start;height:max-content}
+.rail .rl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+.rail a{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--muted);padding:7px 0 7px 14px;font-size:13.5px;border-left:2px solid transparent;margin-left:-2px;transition:.2s}
+.rail a .n{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.rail a:hover{color:var(--text)}
+.rail a.active{color:var(--green);border-left-color:var(--green)}.rail a.active .n{color:var(--green)}
+.hero{margin-bottom:8px}
+.hero .klabel{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,52px);line-height:1.02;margin:0 0 18px;letter-spacing:-.02em}
+.hero .lede{font-size:18px;color:var(--text);max-width:60ch;margin:0 0 24px}
+.hero .lede em{color:var(--green);font-style:normal}
+.meta-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;align-items:center}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:9px 13px;background:var(--ink-2);display:flex;gap:9px;align-items:center}
+.meta b{color:var(--text);font-weight:600}.meta .ic{color:var(--green)}
+.section{margin-top:40px;opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.sec-head .num{font-family:var(--mono);font-size:12.5px;color:var(--green);border:1px solid var(--line-strong);border-radius:7px;padding:4px 9px}
+.sec-head h2{font-family:var(--display);font-weight:700;font-size:23px;margin:0;letter-spacing:-.01em}
+.sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+.panel{background:linear-gradient(180deg,var(--ink-2),var(--ink-3));border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.panel + .panel{margin-top:14px}
+
+/* ---- scorecard (build verdict at a glance) ---- */
+.scorecard{display:flex;flex-wrap:wrap;gap:12px}
+.score{flex:1;min-width:124px;border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:var(--ink-2)}
+.score .big{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.score .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px}
+.score.ok{border-color:rgba(99,211,155,.4)}.score.ok .big{color:var(--green)}
+.score.dev{border-color:rgba(243,177,74,.4)}.score.dev .big{color:var(--amber)}
+.score.gap{border-color:rgba(239,125,136,.4)}.score.gap .big{color:var(--red)}
+.score.add{border-color:rgba(92,201,230,.4)}.score.add .big{color:var(--cyan)}
+.verdict{margin-top:14px;display:flex;align-items:center;gap:12px;font-size:15px;border:1px solid var(--line-strong);border-radius:12px;padding:14px 18px;background:var(--ink-2)}
+.verdict .big{font-family:var(--display);font-weight:700;font-size:17px}
+.verdict.ship{border-color:rgba(99,211,155,.45);background:rgba(99,211,155,.06)}.verdict.ship .big{color:var(--green)}
+.verdict.caveat{border-color:rgba(243,177,74,.45);background:rgba(243,177,74,.06)}.verdict.caveat .big{color:var(--amber)}
+.verdict.block{border-color:rgba(239,125,136,.45);background:rgba(239,125,136,.06)}.verdict.block .big{color:var(--red)}
+
+/* ---- status pill ---- */
+.stat{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.03em;padding:4px 9px;border-radius:6px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.stat.ok{background:rgba(99,211,155,.13);color:var(--green);border:1px solid rgba(99,211,155,.4)}
+.stat.dev{background:rgba(243,177,74,.13);color:var(--amber);border:1px solid rgba(243,177,74,.4)}
+.stat.gap{background:rgba(239,125,136,.13);color:var(--red);border:1px solid rgba(239,125,136,.4)}
+.stat.add{background:rgba(92,201,230,.13);color:var(--cyan);border:1px solid rgba(92,201,230,.4)}
+
+/* ---- planned-vs-built verification table ---- */
+.verify{padding:0;overflow:hidden}
+.vrow{display:grid;grid-template-columns:148px 1fr 1fr;border-top:1px solid var(--line)}
+.vrow:first-child{border-top:0}
+.vrow > div{padding:14px 16px}
+.vrow .vc{border-left:1px solid var(--line)}
+.vrow .item{font-weight:600;font-size:14px;color:var(--text);margin-bottom:6px}
+.vrow .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:6px}
+.vrow .planned{color:var(--muted);font-size:13.5px}
+.vrow .built{color:var(--text);font-size:13.5px}
+.vrow.gap .built{color:var(--faint)}
+.vrow .built code,.vrow .planned code{font-family:var(--mono);font-size:12px;background:var(--raised);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--cyan)}
+.vrow .st-cell{display:flex;align-items:flex-start}
+@media(max-width:760px){.vrow{grid-template-columns:1fr}.vrow .vc{border-left:0;border-top:1px solid var(--line)}}
+
+/* ---- deviation / gap callouts ---- */
+.dev-card{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:14px 18px;margin-top:12px;background:var(--ink-2)}
+.dev-card:first-child{margin-top:0}
+.dev-card.gap{border-left-color:var(--red)}.dev-card.add{border-left-color:var(--cyan)}
+.dev-card .dt{font-weight:600;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+.dev-card p{margin:0;color:var(--muted);font-size:14px}
+.dev-card .why{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:8px}
+.dev-card .why b{color:var(--amber)}
+
+/* ---- shared block styles (schema / api / tree / code) ---- */
+.schema{font-family:var(--mono);font-size:13px}
+.schema .tname{color:var(--green);font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:14px}
+.badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
+.badge.new{background:rgba(99,211,155,.14);color:var(--green);border:1px solid rgba(99,211,155,.4)}
+.badge.mod{background:rgba(243,177,74,.13);color:var(--amber);border:1px solid rgba(243,177,74,.4)}
+.badge.ship{background:rgba(99,211,155,.14);color:var(--green);border:1px solid rgba(99,211,155,.4)}
+.col-row{display:grid;grid-template-columns:160px 130px 1fr;gap:14px;padding:9px 0;border-top:1px solid var(--line);align-items:center}
+.col-row:first-of-type{border-top:0}.col-row .cn{color:var(--text)}.col-row .ct{color:var(--cyan)}.col-row .cd{color:var(--faint);font-family:var(--body);font-size:13px}.pk{color:var(--amber)}
+.col-row.added .cn{color:var(--cyan)}.col-row.added .cn::after{content:" +";color:var(--cyan)}
+.endpoint{border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-top:12px}.endpoint:first-child{margin-top:0}
+.ep-head{display:flex;align-items:center;gap:13px;padding:12px 15px;cursor:pointer;background:var(--ink-2)}
+.verb{font-family:var(--mono);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;letter-spacing:.05em}
+.verb.post{background:rgba(99,211,155,.14);color:var(--green)}.verb.get{background:rgba(92,201,230,.14);color:var(--cyan)}.verb.del{background:rgba(239,125,136,.14);color:var(--red)}.verb.put{background:rgba(243,177,74,.14);color:var(--amber)}
+.ep-path{font-family:var(--mono);font-size:13.5px;color:var(--text)}.ep-desc{margin-left:auto;font-size:12.5px;color:var(--faint)}
+.ep-body{padding:0 15px;max-height:0;overflow:hidden;transition:.3s ease;background:var(--ink)}
+.endpoint.open .ep-body{max-height:340px;padding:15px}
+.ep-body pre{margin:0;font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:pre-wrap}
+.ep-body .k{color:var(--cyan)}.ep-body .v{color:var(--amber)}
+.chev{margin-left:6px;color:var(--faint);transition:.3s}.endpoint.open .chev{transform:rotate(90deg)}
+.tree{font-family:var(--mono);font-size:13.5px;line-height:2}
+.tree .row{display:flex;align-items:center;gap:10px}.tree .row .ind{color:var(--faint)}.tree .fn{color:var(--text)}.tree .dir{color:var(--green)}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-left:4px}
+.tag.new{background:rgba(99,211,155,.12);color:var(--green)}.tag.mod{background:rgba(243,177,74,.12);color:var(--amber)}.tag.unplanned{background:rgba(92,201,230,.12);color:var(--cyan)}
+.code-wrap{display:grid;grid-template-columns:1fr 250px;gap:0;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+@media(max-width:760px){.code-wrap{grid-template-columns:1fr}}
+.code{font-family:var(--mono);font-size:13px;line-height:1.9;padding:16px 18px;background:var(--ink);overflow-x:auto;margin:0}
+.code .ln{color:var(--faint);user-select:none;display:inline-block;width:26px}
+.code .kw{color:var(--cyan)}.code .fn{color:var(--amber)}.code .st{color:var(--green)}.code .cm{color:var(--faint)}
+.code .hl{background:rgba(99,211,155,.08);display:block;margin:0 -18px;padding:0 18px;border-left:2px solid var(--green)}
+.annos{background:var(--ink-2);border-left:1px solid var(--line);padding:16px}
+.anno{font-size:12.5px;margin-bottom:16px}.anno:last-child{margin-bottom:0}
+.anno .tagn{font-family:var(--mono);font-size:11px;color:var(--green);display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.anno .tagn .b{width:18px;height:18px;border-radius:5px;background:var(--green);color:#04140c;display:grid;place-items:center;font-weight:700;font-size:11px}
+.anno p{margin:0;color:var(--muted)}
+.q{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:16px 18px;margin-top:14px;background:var(--ink-2)}.q:first-child{margin-top:0}
+.q .qq{font-weight:600;margin:0 0 4px;font-size:15px}
+.q .rec{font-family:var(--mono);font-size:11.5px;color:var(--amber);margin-bottom:13px}
+.note{font-size:14px;color:var(--muted)}.note b{color:var(--text)}
+.approvebar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:center;gap:16px;padding:14px 26px;background:rgba(10,14,20,.86);backdrop-filter:blur(16px);border-top:1px solid var(--line-strong)}
+.approvebar .info{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+.approvebar .info b{color:var(--text)}.approvebar .info .c{color:var(--amber)}
+.btn{font-family:var(--mono);font-size:13px;font-weight:600;border-radius:10px;padding:11px 20px;cursor:pointer;border:1px solid var(--line-strong);background:var(--ink-2);color:var(--text);transition:.2s}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:linear-gradient(150deg,var(--green),#3fae7c);color:#04140c;border:0;box-shadow:0 8px 22px -8px rgba(99,211,155,.7)}
+.btn.primary:hover{filter:brightness(1.07)}.btn.primary.done{background:linear-gradient(150deg,var(--green),#3fae7c)}
+#mdview{display:none}#mdview.show{display:block;animation:rise .5s ease forwards}
+.md-note{max-width:1180px;margin:0 auto;padding:26px 26px 0}
+.md-note .callout{border:1px solid var(--cyan);border-radius:11px;background:rgba(92,201,230,.07);padding:14px 18px;font-size:14px;color:var(--text);display:flex;gap:12px;align-items:flex-start}
+.md-note .callout b{color:var(--cyan)}
+.mdwall{max-width:1180px;margin:18px auto 0;padding:0 26px}
+.mdwall pre{font-family:var(--mono);font-size:13px;line-height:1.75;color:#aeb9c6;background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:26px 28px;white-space:pre-wrap;max-height:620px;overflow:auto}
+footer{max-width:1180px;margin:0 auto;padding:40px 26px;color:var(--faint);font-family:var(--mono);font-size:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.add-cmt{margin-left:8px;font-family:var(--mono);font-size:11.5px;color:var(--amber);border:1px solid rgba(243,177,74,.5);background:rgba(243,177,74,.1);border-radius:7px;padding:6px 12px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:600}
+.add-cmt:hover{background:var(--amber);color:#1a1206;border-color:var(--amber)}
+.review-hint{display:flex;align-items:center;gap:14px;margin-bottom:30px;padding:13px 18px;border:1px solid rgba(243,177,74,.45);background:rgba(243,177,74,.07);border-radius:12px;font-size:14px;color:var(--text)}
+.review-hint span{flex:1}.review-hint .k{color:var(--amber);font-weight:600}
+.review-hint button{font-family:var(--mono);font-size:12px;border:1px solid var(--line-strong);background:var(--ink-2);color:var(--muted);border-radius:8px;padding:7px 13px;cursor:pointer;white-space:nowrap}
+.review-hint button:hover{color:var(--text)}
+.composer{margin:14px 0 4px;border:1px solid var(--amber);border-radius:11px;background:rgba(243,177,74,.05);padding:14px;animation:rise .35s ease}
+.composer textarea{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--body);font-size:14px;padding:10px 12px;resize:vertical;min-height:62px}
+.composer textarea:focus{outline:none;border-color:var(--amber)}
+.composer .crow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px}
+.composer .anchor{font-family:var(--mono);font-size:11.5px;color:var(--amber)}
+.composer .acts{display:flex;gap:8px}
+.composer button{font-family:var(--mono);font-size:12px;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--ink-2);color:var(--text)}
+.composer button.save{background:var(--amber);color:#1a1206;border:0;font-weight:600}
+.fb-fab{position:fixed;right:24px;bottom:86px;z-index:55;font-family:var(--mono);font-size:13px;font-weight:600;border:0;border-radius:12px;padding:12px 17px;cursor:pointer;background:var(--amber);color:#1a1206;box-shadow:0 12px 30px -10px rgba(243,177,74,.7);display:flex;align-items:center;gap:9px}
+.fb-fab:hover{filter:brightness(1.05)}
+.drawer{position:fixed;top:0;right:0;height:100%;width:392px;max-width:92vw;z-index:70;background:var(--ink-2);border-left:1px solid var(--line-strong);transform:translateX(100%);transition:.32s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;box-shadow:-30px 0 60px -30px rgba(0,0,0,.7)}
+.drawer.open{transform:none}
+.drawer .dh{display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer .dh h3{font-family:var(--display);font-size:18px;margin:0;flex:1}
+.drawer .dh .x{cursor:pointer;color:var(--muted);font-size:22px;background:none;border:0;line-height:1}
+.drawer .dbody{flex:1;overflow:auto;padding:14px 18px}
+.drawer .empty-fb{color:var(--faint);font-family:var(--mono);font-size:13px;text-align:center;padding:42px 10px;line-height:1.8}
+.fb-item{border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin-bottom:11px;background:var(--ink)}
+.fb-item .anch{font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
+.fb-item .anch .del{cursor:pointer;color:var(--faint)}.fb-item .anch .del:hover{color:var(--red)}
+.fb-item p{margin:0;font-size:14px}
+.drawer .df{border-top:1px solid var(--line);padding:14px 18px;display:flex;flex-direction:column;gap:9px}
+.drawer .df .exp{font-family:var(--mono);font-size:13px;font-weight:600;border:0;border-radius:10px;padding:12px;cursor:pointer;background:linear-gradient(150deg,var(--green),#3fae7c);color:#04140c}
+.drawer .df .exp:hover{filter:brightness(1.07)}
+.drawer .df .hint{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:center}
+.toast{position:fixed;bottom:152px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:var(--green);color:#04140c;font-family:var(--mono);font-size:13px;font-weight:600;padding:11px 20px;border-radius:10px;z-index:90;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body data-plan="RECAP_SLUG" data-title="As-built recap" data-credit="idea credit → Steve Sewell’s /visual-recap · reimagined">
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand"><span class="glyph">✓</span><b><span class="slash">/</span>as-built</b></div>
+    <div class="spacer"></div>
+    <div class="view-toggle">
+      <button id="tBlueprint" class="active" onclick="setView('bp')">✓ As-built</button>
+      <button id="tMarkdown" onclick="setView('md')">≣ Original plan</button>
+    </div>
+    <div class="status-chip"><span class="dot"></span>Build review</div>
+  </div>
+
+  <!-- ORIGINAL-PLAN VIEW -->
+  <div id="mdview">
+    <div class="md-note">
+      <div class="callout"><b>This is what you planned.</b><span>The plan you approved before any code was written. Flip back to <b style="color:var(--green)">As-built</b> to see, line by line, what actually shipped against it — and what didn't.</span></div>
+    </div>
+    <div class="mdwall"><pre><!-- ASBUILT:RAWMD --></pre></div>
+  </div>
+
+  <!-- AS-BUILT VIEW -->
+  <div id="bpview" class="shell">
+    <nav class="rail"><div class="rl">Recap index</div><div id="railLinks"></div></nav>
+    <main>
+      <div class="review-hint" id="reviewHint">
+        <span><b>Review the build.</b> Each row is a planned item checked against the real code. Disagree with a verdict, or want a gap fixed? Hit <span class="k">✎ comment</span>, then <span class="k">✦ Fixes</span> (bottom-right) → <span class="k">Copy for the agent</span> and paste it back to Claude.</span>
+        <button onclick="document.getElementById('reviewHint').remove()">Got it</button>
+      </div>
+
+      <!-- ASBUILT:CONTENT -->
+
+      <footer><span>/as-built · local artifact</span><span id="creditLine"></span></footer>
+    </main>
+  </div>
+
+  <!-- FIX PUNCH-LIST -->
+  <button class="fb-fab" onclick="toggleDrawer()">✦ Fixes <span id="fabCount">(0)</span></button>
+  <div class="drawer" id="drawer">
+    <div class="dh"><h3>Fix punch-list</h3><button class="x" onclick="toggleDrawer()">×</button></div>
+    <div class="dbody" id="fbBody"></div>
+    <div class="df">
+      <button class="exp" onclick="exportFeedback()">⧉ Copy all fixes for the agent</button>
+      <div class="hint">paste into Claude Code → it closes every gap at once</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <div class="approvebar">
+    <div class="info">
+      <span><b id="secCount">0</b> sections</span>
+      <span class="c">●</span> <span><b class="c" id="barCount">0</b> fixes flagged</span>
+    </div>
+    <div class="spacer" style="flex:1"></div>
+    <button class="btn">Request fixes</button>
+    <button id="approve" class="btn primary" onclick="approve()">Sign off ✓</button>
+  </div>
+
+</div>
+
+<script>
+/* ---- static interactions ---- */
+function setView(v){
+  const bp=document.getElementById('bpview'),md=document.getElementById('mdview');
+  const tb=document.getElementById('tBlueprint'),tm=document.getElementById('tMarkdown');
+  if(v==='md'){bp.style.display='none';md.classList.add('show');tm.classList.add('active');tb.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
+  else{md.classList.remove('show');bp.style.display='grid';tb.classList.add('active');tm.classList.remove('active');}
+}
+function epToggle(el){el.classList.toggle('open');}
+function approve(){const b=document.getElementById('approve');b.classList.add('done');b.textContent='✓ Signed off';
+  const s=document.querySelector('.status-chip');s.innerHTML='<span class="dot"></span>Signed off';}
+
+/* ---- auto-build chrome from the sections the agent wrote ---- */
+const secs=[...document.querySelectorAll('main .section[id]')];
+const railLinks=document.getElementById('railLinks');
+secs.forEach((s,i)=>{
+  const h2=s.querySelector('.sec-head h2'); if(!h2) return;
+  const n=String(i+1).padStart(2,'0');
+  const num=s.querySelector('.sec-head .num'); if(num) num.textContent=n;
+  const a=document.createElement('a');a.href='#'+s.id;a.innerHTML='<span class="n">'+n+'</span> '+h2.textContent.trim();
+  if(i===0)a.classList.add('active');railLinks.appendChild(a);
+  const sh=s.querySelector('.sec-head');
+  if(sh){const b=document.createElement('button');b.className='add-cmt';b.type='button';
+    b.innerHTML='✎ comment <span class="cnt" data-cnt="'+s.id+'"></span>';
+    b.onclick=()=>openComposer(s,s.id,h2.textContent.trim());sh.appendChild(b);}
+});
+document.getElementById('secCount').textContent=secs.length;
+const hero=document.querySelector('main .hero');
+if(hero){const mg=hero.querySelector('.meta-grid')||hero;const b=document.createElement('button');b.className='add-cmt';b.type='button';
+  b.innerHTML='✎ comment <span class="cnt" data-cnt="overview"></span>';b.onclick=()=>openComposer(hero,'overview','Overview');mg.appendChild(b);}
+document.title='/as-built — '+(document.body.dataset.title||'recap');
+document.getElementById('creditLine').textContent=document.body.dataset.credit||'';
+const map={};[...railLinks.children].forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){[...railLinks.children].forEach(a=>a.classList.remove('active'));map[e.target.id]?.classList.add('active');}});},{rootMargin:'-20% 0px -70% 0px'});
+secs.forEach(s=>io.observe(s));
+
+/* ---- fix punch-list (localStorage-backed, per-recap) ---- */
+const STORE='asbuilt.'+(document.body.dataset.plan||'recap')+'.comments';
+let comments=JSON.parse(localStorage.getItem(STORE)||'[]');
+let activeComposer=null;
+function uid(){return 'c'+Math.random().toString(36).slice(2,8);}
+function saveStore(){localStorage.setItem(STORE,JSON.stringify(comments));renderFeedback();}
+function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');}
+function openComposer(sec,id,label){
+  closeComposer();
+  const c=document.createElement('div');c.className='composer';c.dataset.anchor=id;c.dataset.label=label;
+  c.innerHTML='<div class="anchor">§ '+label+'</div><textarea placeholder="What needs fixing or revisiting here? Be specific — the agent reads this verbatim."></textarea><div class="crow"><span class="anchor" style="color:var(--faint)">stored locally in your browser</span><div class="acts"><button type="button" onclick="closeComposer()">Cancel</button><button type="button" class="save" onclick="commit()">Flag fix</button></div></div>';
+  const after=sec.querySelector('.sec-head')||sec.querySelector('.meta-grid')||sec;
+  after.insertAdjacentElement('afterend',c);activeComposer=c;c.querySelector('textarea').focus();
+}
+function closeComposer(){if(activeComposer){activeComposer.remove();activeComposer=null;}}
+function commit(){if(!activeComposer)return;const text=activeComposer.querySelector('textarea').value.trim();if(!text){activeComposer.querySelector('textarea').focus();return;}
+  comments.push({id:uid(),anchor:activeComposer.dataset.anchor,label:activeComposer.dataset.label,text:text,ts:Date.now()});
+  closeComposer();saveStore();showToast('Flagged — add the rest, then export them all at once');}
+function del(id){comments=comments.filter(c=>c.id!==id);saveStore();}
+function renderFeedback(){
+  document.querySelectorAll('[data-cnt]').forEach(el=>{const n=comments.filter(c=>c.anchor===el.getAttribute('data-cnt')).length;el.textContent=n?'('+n+')':'';});
+  document.getElementById('fabCount').textContent='('+comments.length+')';
+  const bar=document.getElementById('barCount');if(bar)bar.textContent=comments.length;
+  const body=document.getElementById('fbBody');
+  if(!comments.length){body.innerHTML='<div class="empty-fb">No fixes flagged yet.<br>Hit ✎ comment on any row,<br>jot down what needs changing,<br>then send it all to the agent at once.</div>';return;}
+  body.innerHTML=comments.map(c=>'<div class="fb-item"><div class="anch"><span>§ '+c.label+'</span><span class="del" onclick="del(\''+c.id+'\')">delete</span></div><p>'+escapeHtml(c.text)+'</p></div>').join('');
+}
+function exportFeedback(){
+  if(!comments.length){showToast('No fixes flagged yet');return;}
+  let md='# Fixes for as-built recap: '+(document.body.dataset.title||'recap')+'\n\nThe build was reviewed against the plan. Apply ALL of the following fixes, then re-run /as-built to confirm each is closed:\n\n';
+  comments.forEach((c,i)=>{md+=(i+1)+'. [§ '+c.label+'] '+c.text+'\n';});
+  navigator.clipboard.writeText(md).then(()=>showToast('Copied '+comments.length+' fixes — paste into Claude Code')).catch(()=>showToast('Copy failed — select text in the drawer'));
+}
+renderFeedback();
+</script>
+</body>
+</html>

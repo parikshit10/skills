@@ -10,6 +10,8 @@ Maintained by [@parikshitpruthi](https://www.instagram.com/parikshitpruthi/) (fo
 
 | Skill | What it does | When to use it |
 |---|---|---|
+| [blueprint](./blueprint) | Turns a coding plan into a single visual, reviewable HTML blueprint — hero summary, file-by-file change blocks, risks — so the plan can be scanned and approved before any code is written. | Planning a feature, refactor, or bugfix; after entering plan mode; when a markdown plan is too long to scan. |
+| [as-built](./as-built) | After a change ships, verifies it against the original plan in a visual HTML report — what was promised vs what actually shipped, what deviated, what's missing. | Recapping a build, confirming planned-vs-built, catching scope drift after a feature lands. |
 | [market-gap-research](./market-gap-research) | Mines X, Reddit, and review sites via Apify to surface product gaps and unmet feature requests, then ships an Instagram carousel / LinkedIn post / research report. | Competitor research, finding SaaS wedges, complaint mining, "what do users wish X did?" |
 | [handoff](./handoff) | Captures everything in the current session into one self-contained note so a brand-new session can pick up exactly where this one left off — no context lost. | Wrapping up a session, before `/clear`, switching machines, or parking work to continue later. |
 
@@ -46,6 +48,10 @@ git clone https://github.com/parikshit10/skills.git ~/parikshit-skills
 
 # Symlink the skills you want into your Claude Code skills dir
 ln -s ~/parikshit-skills/market-gap-research ~/.claude/skills/market-gap-research
+
+# blueprint + as-built are a pair — plan visually, then verify the build
+ln -s ~/parikshit-skills/blueprint ~/.claude/skills/blueprint
+ln -s ~/parikshit-skills/as-built ~/.claude/skills/as-built
 ```
 
 Restart Claude Code. The skill will show up in your skills list and auto-trigger on matching prompts.
